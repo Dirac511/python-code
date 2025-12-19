@@ -8,6 +8,7 @@ pi = math.pi
 Nc = 8
 U = 3
 
+
 ds = [2.4]
 Ts = [0.08]
 
@@ -18,9 +19,9 @@ index = ['00','01','02','03','10','11','12','13','20','21','22','23','30','31','
         #  0 ,  1 ,  2 ,  3 ,  4 ,  5 ,  6,,  7 ,  8 ,  9 , 10 , 11 , 12 , 13 , 14 , 15
 
 orbitals = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-orbitals = [7]
+#orbitals = [7]
 
-num = [6]
+num = [1,2,3,4,5,6]
 
 mode = 'band'
 mode = 'orbital'
@@ -41,11 +42,11 @@ for iid in range(0,len(ds)):
                 #print(round(a[3,1]/pi,2)) ### check lowest frequency
                 if len(orbitals)==16:
                      fig, axes = plt.subplots(4,4,figsize=(10,10))
-                     R = []
                      #plt.subplots_adjust(wspace=-0.6)
                      for i in range(0,len(num)):
                          n = num[i]-1
                          N = num[i]
+                         R = []
                          for idx, m in enumerate(orbitals):
                              M = orbitals[m]
                              k1s = a[2,32*Nc*M+n*Nc:32*Nc*M+n*Nc+Nc]  ##first K
@@ -86,44 +87,39 @@ for iid in range(0,len(ds)):
                              #print(K1)
                              #print(K2)
                              #print(Vec)
-                     r = np.concatenate([z.flatten() for z in R])
-                     t = np.max(np.abs(r))
+                         r = np.concatenate([z.flatten() for z in R])
+                         t = np.max(np.abs(r))
                     
-                     for idx,M in enumerate(orbitals):
-                          u = idx // 4
-                          v = idx % 4
-                          ax = axes[u,v]
-                          Z = R[idx]
+                         for idx,M in enumerate(orbitals):
+                             u = idx // 4
+                             v = idx % 4
+                             ax = axes[u,v]
+                             Z = R[idx]
 
-                          ax.set_title(str(u)+str(v)+'_['+str(N)+']',fontsize=14)
+                             ax.set_title(str(u)+str(v)+'_['+str(N)+']',fontsize=14)
 
-                          contour = ax.contourf(X, Y, Z, levels=np.arange(-t-t/100, t+t/100, t/100), cmap='RdBu')
-                          #cb = fig.colorbar(contour, ax=ax)
-                          #ticks = [-t, -t/2, 0.0, t/2, t]
-                          #cb.set_ticks(ticks)
-                          #cb.ax.tick_params(labelsize=22)
-                          #cb.mappable.set_clim(-t-t/100, t+t/100)
-                          ax.set_xticks([])
-                          ax.set_yticks([])
-                          x = [-pi,0,pi]                          
-                          if idx == 15:
-                              ax.set_xticks(x);ax.set_xticklabels([r'$-\pi$','0',r'$\pi$'],fontsize=14)#,alpha=0)
-                              ax.set_yticks(x);ax.set_yticklabels([r'$-\pi$','0',r'$\pi$'],fontsize=14)#,alpha=0)
+                             contour = ax.contourf(X, Y, Z, levels=np.arange(-t-t/100, t+t/100, t/100), cmap='RdBu')
+                             ax.set_xticks([])
+                             ax.set_yticks([])
+                             x = [-pi,0,pi]                          
+                             if idx == 15:
+                                  ax.set_xticks(x);ax.set_xticklabels([r'$-\pi$','0',r'$\pi$'],fontsize=14)#,alpha=0)
+                                  ax.set_yticks(x);ax.set_yticklabels([r'$-\pi$','0',r'$\pi$'],fontsize=14)#,alpha=0)
                               #ax.set_xlabel('$K_x$',fontsize=20)#,alpha=0);ax.tick_params(bottom=False)
                               #ax.set_ylabel('$K_y$',fontsize=20)#,alpha=0);ax.tick_params(left=False)
-                          ax.scatter(K1,K2,color='g',s=100,zorder=12)
-                          ax.set_xlim(min(x),max(x))
-                          ax.set_ylim(min(x),max(x))
+                             ax.scatter(K1,K2,color='g',s=100,zorder=12)
+                             ax.set_xlim(min(x),max(x))
+                             ax.set_ylim(min(x),max(x))
 
-                     fig.subplots_adjust(bottom=0.15)
-                     cb = fig.add_axes([0.15, 0.05, 0.7, 0.03])
-                     cb = fig.colorbar(contour, cax=cb,orientation='horizontal')
-                     ticks = [-t, -t/2, 0.0, t/2, t]
-                     cb.set_ticks(ticks)
-                     cb.ax.tick_params(labelsize=14)
-                     cb.mappable.set_clim(-t-t/100, t+t/100)
+                         fig.subplots_adjust(bottom=0.12)
+                         cb = fig.add_axes([0.15, 0.05, 0.7, 0.03])
+                         cb = fig.colorbar(contour, cax=cb,orientation='horizontal')
+                         ticks = [-t, -t/2, 0.0, t/2, t]
+                         cb.set_ticks(ticks)
+                         cb.ax.tick_params(labelsize=14)
+                         cb.mappable.set_clim(-t-t/100, t+t/100)
 
-                     plt.savefig('orbital_'+str(N)+'_Nc'+str(Nc)+'_U'+str(U)+'_d'+str(d)+'_T'+str(T)+'_total'+'.png',bbox_inches='tight')
+                         plt.savefig('orbital_'+str(N)+'_Nc'+str(Nc)+'_U'+str(U)+'_d'+str(d)+'_T'+str(T)+'_total'+'.png',bbox_inches='tight')
                         
                 else:
 
