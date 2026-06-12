@@ -1,173 +1,214 @@
 import numpy as np
 from mayavi import mlab
 
-
-def dx2y2_orbital(x, y, z, center=(0,0,0)):
-    """计算d_x²-y²轨道波函数"""
+def dx2y2_orbital(x, y, z, center=(0, 0, 0)):
     x_shift = x - center[0]
     y_shift = y - center[1]
     z_shift = z - center[2]
-    r = np.sqrt(0.3*x_shift ** 2 + 0.3*y_shift ** 2 + z_shift ** 2)
+    r = 1.2 * np.sqrt(0.3 * x_shift ** 2 + 0.3 * y_shift ** 2 + 0.7 * z_shift ** 2)
     r_safe = np.where(r == 0, 1e-10, r)
-    return ((1.4*x_shift ** 2 - 1.4*y_shift ** 2) / r_safe ** 2) * np.exp(-r / 1)  # 调整衰减参数
+    return ((2 * x_shift ** 2 - 2 * y_shift ** 2) / r_safe ** 2) * np.exp(-r / 1)
 
-def dz2_orbital(x, y, z, center=(0,0,0)):
-    """计算d_z²轨道波函数"""
+
+def dz2_orbital(x, y, z, center=(0, 0, 0)):
     x_shift = x - center[0]
     y_shift = y - center[1]
     z_shift = z - center[2]
-    r = np.sqrt(x_shift**2 + y_shift**2 + 0.3*z_shift**2)
+    r = 1.1 * np.sqrt(x_shift ** 2 + y_shift ** 2 + 0.3 * z_shift ** 2)
     r_safe = np.where(r == 0, 1e-10, r)
-    return ((3*z_shift**2 - r**2) / r_safe**2) * np.exp(-r/1)
+    return ((3 * z_shift ** 2 - r ** 2) / r_safe ** 2) * np.exp(-r / 1)
+
+def px_orbital(x, y, z, center=(0, 0, 0)):
+    x_shift = x - center[0]
+    y_shift = y - center[1]
+    z_shift = z - center[2]
+    r = 1.1 * np.sqrt(x_shift**2 + y_shift**2 + z_shift**2)
+    r_safe = np.where(r == 0, 1e-10, r)
+    return (1.5*x_shift / r_safe) * np.exp(-r / 1.5)
+
+
+def py_orbital(x, y, z, center=(0, 0, 0)):
+    x_shift = x - center[0]
+    y_shift = y - center[1]
+    z_shift = z - center[2]
+    r = 1.1 * np.sqrt(x_shift**2 + y_shift**2 + z_shift**2)
+    r_safe = np.where(r == 0, 1e-10, r)
+    return (1.5*y_shift / r_safe) * np.exp(-r / 1.5)
+
+
+def pz_orbital(x, y, z, center=(0, 0, 0)):
+    x_shift = x - center[0]
+    y_shift = y - center[1]
+    z_shift = z - center[2]
+    r = 1.1 * np.sqrt(x_shift**2 + y_shift**2 + z_shift**2)
+    r_safe = np.where(r == 0, 1e-10, r)
+    return (1.5*z_shift / r_safe) * np.exp(-r / 1.5)
+
 
 def plot_dx2y2_orbitals():
-    """绘制d_x²-y²轨道"""
-    # 扩大网格范围
     x = np.linspace(-10, 10, 100)
     y = np.linspace(-10, 10, 100)
     z = np.linspace(-10, 10, 100)
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-    # 计算波函数
     psi = dx2y2_orbital(X, Y, Z, 1)
 
+    mlab.figure(size=(1200, 900), bgcolor=(0.98, 0.98, 0.98))
 
+    color_pos = (0.85, 0.45, 0.20)  # 正相位 - 暖橙色
+    color_neg = (0.20, 0.60, 0.60)  # 负相位 - 青绿色
 
-    # 创建图形窗口
-    mlab.figure(size=(1200, 900), bgcolor=(1, 1, 1))
+    contour_level = 0.08
 
-    # 使用更低的等值面级别来显示完整轨道
-    contour_level = 0.02  # 降低等值面级别
-
-
-    # 绘制正相位（沿x轴方向，红色）
     mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
-                   color=(1, 0, 0), opacity=1.0,
+                   color=color_pos, opacity=0.95,
                    transparent=True, name='Positive Phase')
 
-    # 绘制负相位（沿y轴方向，蓝色）
     mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
-                   color=(0, 0, 1), opacity=1.0,
+                   color=color_neg, opacity=0.95,
                    transparent=True, name='Negative Phase')
 
-    # 添加坐标轴
-    #mlab.axes(xlabel='X', ylabel='Y', zlabel='Z',
-    #          color=(0, 0, 0), nb_labels=5,
-    #          ranges=[-8, 8, -8, 8, -8, 8])  # 设置坐标轴范围
-    #mlab.outline(color=(0, 0, 0))
-
-    # 添加标题
-    #mlab.title(r'$d_{x^2-y^2}$ 电子轨道 - 完整显示', size=0.5, height=0.95, color=(0, 0, 0))
-
-    # 设置视角
-    #mlab.view(azimuth=45, elevation=60, distance=30)
-
-    # 显示图形
     mlab.show()
 
+
 def plot_dz2_orbitals():
-    """绘制d_x²-y²轨道"""
-    # 扩大网格范围
     x = np.linspace(-8, 8, 100)
     y = np.linspace(-8, 8, 100)
     z = np.linspace(-12, 12, 100)
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-    # 计算波函数值
     psi = dz2_orbital(X, Y, Z)
-    # 创建图形窗口
-    mlab.figure(size=(1200, 900), bgcolor=(1, 1, 1))
-    # 使用更低的等值面级别来显示完整轨道
-    contour_level = 0.02  # 降低等值面级别
-    # 绘制正相位（沿x轴方向，红色）
+
+    mlab.figure(size=(1200, 900), bgcolor=(0.98, 0.98, 0.98))
+
+    color_pos = (0.85, 0.45, 0.20)  # 正相位 - 暖橙色
+    color_neg = (0.20, 0.60, 0.60)  # 负相位 - 青绿色
+
+    contour_level = 0.1
+
     mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
-                   color=(1, 0, 0), opacity=1.0,
+                   color=color_pos, opacity=0.95,
                    transparent=True, name='Positive Phase')
-    # 绘制负相位（沿y轴方向，蓝色）
+
     mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
-                   color=(0, 0, 1), opacity=1.0,
+                   color=color_neg, opacity=0.95,
                    transparent=True, name='Negative Phase')
 
-    # 添加坐标轴
     mlab.axes(xlabel='X', ylabel='Y', zlabel='Z',
-               color=(1, 1, 0), nb_labels=5,
-               ranges=[-8, 8, -8, 8, -8, 8])  # 设置坐标轴范围
-    mlab.outline(color=(1, 1, 0))
+              color=(0.5, 0.5, 0.5), nb_labels=5,
+              ranges=[-8, 16, -8, 8, -8, 8])
+    mlab.outline(color=(0.5, 0.5, 0.5))
 
-    # 添加标题
-    # mlab.title(r'$d_{x^2-y^2}$ 电子轨道 - 完整显示', size=0.5, height=0.95, color=(0, 0, 0))
-
-    # 设置视角
-    # mlab.view(azimuth=45, elevation=60, distance=30)
-
-    # 显示图形
     mlab.show()
+
 
 def plot_orbitals():
-    """绘制d_x²-y²轨道"""
-    # 扩大网格范围
-    x = np.linspace(-20, 20, 100)
-    y = np.linspace(-20, 20, 100)
-    z = np.linspace(-30, 30, 100)
+    x = np.linspace(-25, 10, 100)
+    y = np.linspace(-25, 10, 100)
+    z = np.linspace(-16, 35, 100)
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
-    # 计算波函数值
-    grid_centers = [(-8, -8, 0),
-                    (-8, 8, 0),
-                    (8, -8, 0),
-                    (8, 8, 0),
-                    (-8, -8, 20),
-                    (-8, 8, 20),
-                    (8, -8, 20),
-                    (8, 8, 20)
-                    ]
 
-    # 创建图形窗口
+    #grid_centers = [(-8, -8, 0),
+    #                (-8, 8, 0),
+    #                (8, -8, 0),
+    #                (8, 8, 0),
+    #                (8, 24, 0),
+    #                (-8, 24, 0),
+    #                (-8, -8, 20),
+    #                (-8, 8, 20),
+    #                (8, -8, 20),
+    #                (8, 8, 20),
+    #                (8, 24, 20),
+    #                (-8, 24, 20)]
+
+    grid_centerds = [(-8, -8, -4),
+                     (-8, -8, 20)]
+
+    grid_centerpxs = [(-20, -8, -4),
+                      (4, -8, -4),
+                      (-20, -8, 20),
+                       (4, -8, 20)]
+
+    grid_centerpys = [(-8, -20, -4),
+                      (-8, 4, -4),
+                      (-8, -20, 20),
+                      (-8, 4, 20)
+                      ]
+
+    grid_centerpzs = [(-8, -8, 8)]
+
     mlab.figure(size=(1200, 900), bgcolor=(1, 1, 1))
-    # 使用更低的等值面级别来显示完整轨道
-    contour_level = 0.2  # 降低等值面级别
-    # 绘制正相位（沿x轴方向，红色）
-    for i, center in enumerate(grid_centers):
-        psi = dz2_orbital(X, Y, Z,center)
-        psi1 = dx2y2_orbital(X, Y, Z,center)
+
+    color_pos = (0.90, 0.62, 0.42)  # 香槟橙
+    color_neg = (0.42, 0.65, 0.82)  # 静谧蓝
+
+    contour_level = 0.1
+
+    for i, center in enumerate(grid_centerds):
+        psi = dz2_orbital(X, Y, Z, center)
+        psi1 = dx2y2_orbital(X, Y, Z, center)
+
+        # dz2 轨道
         mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
-                       color=(1, 0, 0), opacity=1.0,
-                       transparent=True, name='Positive Phase')
-        # 绘制负相位（沿y轴方向，蓝色）
+                       color=color_pos, opacity=1,
+                       transparent=True, name=f'dz2_pos_{i}')
+
         mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
-                       color=(0, 0, 1), opacity=1.0,
-                       transparent=True, name='Negative Phase')
+                       color=color_neg, opacity=1,
+                       transparent=True, name=f'dz2_neg_{i}')
 
+        # dx2y2 轨道
         mlab.contour3d(X, Y, Z, psi1, contours=[contour_level],
-                       color=(1, 0, 0), opacity=1.0,
-                       transparent=True, name='Positive Phase')
-        # 绘制负相位（沿y轴方向，蓝色）
+                       color=color_pos, opacity=1,
+                       transparent=True, name=f'dx2y2_pos_{i}')
+
         mlab.contour3d(X, Y, Z, -psi1, contours=[contour_level],
-                       color=(0, 0, 1), opacity=1.0,
-                       transparent=True, name='Negative Phase')
-        # 添加坐标轴
-    #mlab.axes(xlabel='X', ylabel='Y', zlabel='Z',
-    #         color=(0,0,0), nb_labels=5,
-    #         ranges=[-50, 100, -50, 100, -50, 100])  # 设置坐标轴范围
-    #mlab.outline(color=(0, 0, 0))
-    #mlab.plot3d([-20, 20], [20, -20], [0, 0], color=(0.7, 0.7, 0.7), tube_radius=0.01)
-    #mlab.plot3d([-20, 20], [20, -20], [20, 20], color=(0.7, 0.7, 0.7), tube_radius=0.01)
-    plane_size = 20
-    xx, yy = np.mgrid[-plane_size:plane_size:50j, -plane_size:plane_size:50j]
-    zz = np.zeros_like(xx)
-    zz1 = np.ones_like(xx)*20
-    mlab.mesh(xx, yy, zz, color=(0.7, 0.9, 0.9), opacity=0.4)
-    mlab.mesh(xx, yy, zz1, color=(0.7, 0.9, 0.9), opacity=0.4)
-    # 添加标题
-    # mlab.title(r'$d_{x^2-y^2}$ 电子轨道 - 完整显示', size=0.5, height=0.95, color=(0, 0, 0))
+                       color=color_neg, opacity=1,
+                       transparent=True, name=f'dx2y2_neg_{i}')
 
-    # 设
-    mlab.view(azimuth=30, elevation=70, distance=100)
+    for i, center in enumerate(grid_centerpxs):
+        psi = px_orbital(X, Y, Z, center)
 
-    # 显示图形
-    mlab.savefig('1.png', size=(2000, 2000),magnification=4)
+        # px 轨道
+        mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
+                       color=color_pos, opacity=1,
+                       transparent=True, name=f'px_pos_{i}')
+
+        mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
+                       color=color_neg, opacity=1,
+                       transparent=True, name=f'px_neg_{i}')
+
+    for i, center in enumerate(grid_centerpys):
+        psi = py_orbital(X, Y, Z, center)
+
+        # py 轨道
+        mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
+                       color=color_pos, opacity=1,
+                       transparent=True, name=f'py_pos_{i}')
+
+        mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
+                       color=color_neg, opacity=1,
+                       transparent=True, name=f'py_neg_{i}')
+
+    for i, center in enumerate(grid_centerpzs):
+        psi = pz_orbital(X, Y, Z, center)
+
+        # pz 轨道
+        mlab.contour3d(X, Y, Z, psi, contours=[contour_level],
+                       color=color_pos, opacity=1,
+                       transparent=True, name=f'pz_pos_{i}')
+
+        mlab.contour3d(X, Y, Z, -psi, contours=[contour_level],
+                       color=color_neg, opacity=1,
+                       transparent=True, name=f'pz_neg_{i}')
+
+    # 设置视角
+    mlab.view(azimuth=30, elevation=60, distance=100, focalpoint=(10, 10, 10))
+
+    mlab.savefig('nature_style_orbitals.png', size=(2000, 2000), magnification=4)
     mlab.show()
 
-if __name__ == "__main__":
-    #plot_dx2y2_orbitals()
-    #plot_dz2_orbitals()
-    plot_orbitals()
-    plot_orbitals()
 
+if __name__ == "__main__":
+    # plot_dx2y2_orbitals()
+    # plot_dz2_orbitals()
+
+    plot_orbitals()
